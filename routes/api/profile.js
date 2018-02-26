@@ -126,4 +126,56 @@ router.post(
   }
 );
 
+// DELETE /profile/experience/:exp_id [Delete Experience (Private)]
+router.delete(
+  '/experience/:exp_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findOne({
+      user: req.user.id
+    }).then(profile => {
+      // Get remove index
+      const removeIndex = profile.experience
+        .map(function(item) {
+          return item.id;
+        })
+        .indexOf(req.params.exp_id);
+
+      // Splice out of array
+      profile.experience.splice(removeIndex, 1);
+
+      // Save
+      profile.save().then(profile => {
+        res.json({ success: true, msg: 'Experience removed', profile });
+      });
+    });
+  }
+);
+
+// DELETE /profile/education/:edu_id [Delete Education (Private)]
+router.delete(
+  '/education/:edu_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findOne({
+      user: req.user.id
+    }).then(profile => {
+      // Get remove index
+      const removeIndex = profile.education
+        .map(function(item) {
+          return item.id;
+        })
+        .indexOf(req.params.edu_id);
+
+      // Splice out of array
+      profile.education.splice(removeIndex, 1);
+
+      // Save
+      profile.save().then(profile => {
+        res.json({ success: true, msg: 'Education removed', profile });
+      });
+    });
+  }
+);
+
 module.exports = router;
