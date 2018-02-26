@@ -8,13 +8,16 @@ const users = require('./routes/api/users');
 
 const app = express();
 
+// DB Config
+const db = require('./config/keys').mongoURI;
+
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Connect to mongoose
 mongoose
-  .connect('mongodb://brad:brad@ds245518.mlab.com:45518/sharesocial')
+  .connect(db)
   .then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err));
 
