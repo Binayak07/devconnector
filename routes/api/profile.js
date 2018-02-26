@@ -20,11 +20,15 @@ router.get(
     Profile.findOne({ user: req.user.id })
       .populate('user', ['name', 'email'])
       .then(profile => {
+        if (!profile) {
+          res.json({
+            success: false,
+            msg: 'There is no profile for this user'
+          });
+        }
         res.json({ success: true, data: { profile } });
       })
-      .catch(err =>
-        res.json({ success: false, msg: 'There is no profile for this user' })
-      );
+      .catch(err => res.json({ success: false, msg: err }));
   }
 );
 
@@ -64,6 +68,7 @@ router.post(
     // Get Fields
     const profileFields = {};
     profileFields.user = req.user.id;
+    if (req.body.handle) profileFields.handle = req.body.handle;
     if (req.body.age) profileFields.age = req.body.age;
     if (req.body.location) profileFields.location = req.body.location;
     if (req.body.bio) profileFields.bio = req.body.bio;
@@ -111,16 +116,27 @@ router.post(
         } else {
           // Save
 
-          new Profile(profileFields)
-            .save()
-            .then(profile => {
-              res.json({
-                success: true,
-                msg: 'Profile created',
-                data: { profile }
+          // Check if handle exists
+          Profile.findOne({ handle: profileFields.handle }).then(profile => {
+            if (profile) {
+              return res.json({
+                success: false,
+                msg: 'That handle already exists'
               });
-            })
-            .catch(err => res.json({ success: false, msg: err }));
+            }
+
+            // Create profile
+            new Profile(profileFields)
+              .save()
+              .then(profile => {
+                res.json({
+                  success: true,
+                  msg: 'Profile created',
+                  data: { profile }
+                });
+              })
+              .catch(err => res.json({ success: false, msg: err }));
+          });
         }
       })
       .catch(err => res.json({ success: false, msg: err }));
@@ -251,7 +267,7 @@ router.delete(
   }
 );
 
-// @route DELETE api/profile/user/user_id
+// @route DELETE api/profile
 // @desc Delete Profile & User
 // @access Private
 router.delete(

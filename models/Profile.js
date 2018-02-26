@@ -7,6 +7,10 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
+  handle: {
+    type: String,
+    max: 40
+  },
   gravatarimg: {
     type: String
   },
