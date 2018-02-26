@@ -13,7 +13,7 @@ Brad Traversy
 
 ### Version
 
-alpha-1.0.0
+alpha-0.0.1
 
 ### License
 
