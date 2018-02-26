@@ -98,29 +98,29 @@ router.get('/user/:user_id', (req, res) => {
     );
 });
 
-// POST /profile/experience [Add Experience (Private)]
+// POST /profile/education [Add Education (Private)]
 router.post(
-  '/experience',
+  '/education',
   passport.authenticate('jwt', { session: false }),
   (req, res, next) => {
     Profile.findOne({
       user: req.user.id
     }).then(profile => {
-      const newExp = {
-        title: req.body.title,
-        company: req.body.title,
-        location: req.body.location,
+      const newEdu = {
+        school: req.body.school,
+        degree: req.body.degree,
+        fieldofstudy: req.body.fieldofstudy,
         from: req.body.from,
         to: req.body.to,
         current: req.body.current,
         description: req.body.description
       };
 
-      // Add to exp array
-      profile.experience.unshift(newExp);
+      // Add to edu array
+      profile.education.unshift(newEdu);
 
       profile.save().then(profile => {
-        res.json({ success: true, msg: 'Experience added', profile });
+        res.json({ success: true, msg: 'Education added', profile });
       });
     });
   }
