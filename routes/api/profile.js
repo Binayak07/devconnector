@@ -45,17 +45,45 @@ router.get('/all', (req, res) => {
 });
 
 // @route GET api/profile/user/:user_id
-// @desc Get any user profile data
+// @desc Get user profile data by ID
 // @access Public
 router.get('/user/:user_id', (req, res) => {
   Profile.findOne({ user: req.params.user_id })
     .populate('user', 'name')
     .then(profile => {
-      res.json({ success: true, data: { profile } });
+      if (profile) {
+        return res.json({
+          success: true,
+          msg: 'Profile retrieved',
+          data: { profile }
+        });
+      }
+      res.json({ success: false, msg: 'There is no profile for this user' });
     })
-    .catch(err =>
-      res.json({ success: false, msg: 'There is no profile for this user' })
-    );
+    .catch(err => res.json({ success: false, msg: err }));
+});
+
+// @route GET api/profile/handle/:handle
+// @desc Get user profile data by handle
+// @access Public
+router.get('/handle/:handle', (req, res) => {
+  Profile.findOne({ handle: req.params.handle })
+    .populate('user', 'name')
+    .then(profile => {
+      if (profile) {
+        return res.json({
+          success: true,
+          msg: 'Profile retrieved',
+          data: { profile }
+        });
+      } else {
+        res.json({
+          success: false,
+          msg: 'There is no profile with that handle'
+        });
+      }
+    })
+    .catch(err => res.json({ success: false, msg: err }));
 });
 
 // @route POST api/profile
