@@ -11,6 +11,9 @@ const ProfileSchema = new Schema({
     type: String,
     max: 40
   },
+  company: {
+    type: String
+  },
   gravatarimg: {
     type: String
   },

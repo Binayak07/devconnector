@@ -10,9 +10,9 @@ const Profile = require('../../models/Profile');
 // Load User Model
 const User = require('../../models/User');
 
-// @route GET api/profile/user/current
-// @desc Get current users profile data
-// @access Private
+// @route   GET api/profile/user/current
+// @desc    Get current users profile data
+// @access  Private
 router.get(
   '/user/current',
   passport.authenticate('jwt', { session: false }),
@@ -32,9 +32,9 @@ router.get(
   }
 );
 
-// @route GET api/profile/all
-// @desc Get all users with a profile
-// @access Public
+// @route   GET api/profile/all
+// @desc    Get all users with a profile
+// @access  Public
 router.get('/all', (req, res) => {
   Profile.find()
     .populate('user', ['name', 'email'])
@@ -44,9 +44,9 @@ router.get('/all', (req, res) => {
     .catch(err => res.json({ success: false, msg: err }));
 });
 
-// @route GET api/profile/user/:user_id
-// @desc Get user profile data by ID
-// @access Public
+// @route   GET api/profile/user/:user_id
+// @desc    Get user profile data by ID
+// @access  Public
 router.get('/user/:user_id', (req, res) => {
   Profile.findOne({ user: req.params.user_id })
     .populate('user', 'name')
@@ -63,9 +63,9 @@ router.get('/user/:user_id', (req, res) => {
     .catch(err => res.json({ success: false, msg: err }));
 });
 
-// @route GET api/profile/handle/:handle
-// @desc Get user profile data by handle
-// @access Public
+// @route   GET api/profile/handle/:handle
+// @desc    Get user profile data by handle
+// @access  Public
 router.get('/handle/:handle', (req, res) => {
   Profile.findOne({ handle: req.params.handle })
     .populate('user', 'name')
@@ -86,9 +86,9 @@ router.get('/handle/:handle', (req, res) => {
     .catch(err => res.json({ success: false, msg: err }));
 });
 
-// @route POST api/profile
-// @desc Add or update user profile
-// @access Private
+// @route   POST api/profile
+// @desc    Add or update user profile
+// @access  Private
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
@@ -97,6 +97,7 @@ router.post(
     const profileFields = {};
     profileFields.user = req.user.id;
     if (req.body.handle) profileFields.handle = req.body.handle;
+    if (req.body.company) profileFields.company = req.body.company;
     if (req.body.age) profileFields.age = req.body.age;
     if (req.body.location) profileFields.location = req.body.location;
     if (req.body.bio) profileFields.bio = req.body.bio;
@@ -171,9 +172,9 @@ router.post(
   }
 );
 
-// @route POST api/profile/experience
-// @desc Add Experience
-// @access Private
+// @route   POST api/profile/experience
+// @desc    Add Experience
+// @access  Private
 router.post(
   '/experience',
   passport.authenticate('jwt', { session: false }),
@@ -201,9 +202,9 @@ router.post(
   }
 );
 
-// @route POST api/profile/education
-// @desc Add Education
-// @access Private
+// @route   POST api/profile/education
+// @desc    Add Education
+// @access  Private
 router.post(
   '/education',
   passport.authenticate('jwt', { session: false }),
@@ -231,9 +232,9 @@ router.post(
   }
 );
 
-// @route DELETE api/profile/experience/:exp_id
-// @desc Delete Experience
-// @access Private
+// @route   DELETE api/profile/experience/:exp_id
+// @desc    Delete Experience
+// @access  Private
 router.delete(
   '/experience/:exp_id',
   passport.authenticate('jwt', { session: false }),
@@ -263,9 +264,9 @@ router.delete(
   }
 );
 
-// @route DELETE api/profile/education/:edu_id
-// @desc Delete Education
-// @access Private
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete Education
+// @access  Private
 router.delete(
   '/education/:edu_id',
   passport.authenticate('jwt', { session: false }),
@@ -295,9 +296,9 @@ router.delete(
   }
 );
 
-// @route DELETE api/profile
-// @desc Delete Profile & User
-// @access Private
+// @route   DELETE api/profile
+// @desc    Delete Profile & User
+// @access  Private
 router.delete(
   '/',
   passport.authenticate('jwt', { session: false }),
