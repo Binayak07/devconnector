@@ -87,7 +87,7 @@ router.delete(
     }).then(profile => {
       Post.findById(req.params.id)
         .then(post => {
-          // Check for post owner before update
+          // Check for post owner before the update
           if (post.user.toString() !== req.user.id) {
             return res.json({ success: false, msg: 'User unauthorized' });
           }
@@ -96,6 +96,78 @@ router.delete(
           post.remove().then(() => {
             res.json({ success: true, msg: 'Post removed' });
           });
+        })
+        .catch(err => res.json({ success: false, msg: 'No post found' }));
+    });
+  }
+);
+
+// @route   POST /api/posts/like/:id
+// @desc    Like post
+// @access  Private
+router.post(
+  '/like/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findOne({
+      user: req.user.id
+    }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          if (
+            post.likes.filter(like => like.user.toString() === req.user.id)
+              .length > 0
+          ) {
+            return res.json({
+              success: false,
+              msg: 'User already liked this post'
+            });
+          }
+
+          // Add user id to likes array
+          post.likes.unshift({ user: req.user.id });
+
+          // Save
+          post.save().then(() => {
+            res.json({ success: true, msg: 'Post liked' });
+          });
+        })
+        .catch(err => res.json({ success: false, msg: 'No post found' }));
+    });
+  }
+);
+
+// @route   POST /api/posts/unlike/:id
+// @desc    Unlike post
+// @access  Private
+router.post(
+  '/unlike/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findOne({
+      user: req.user.id
+    }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          if (
+            post.likes.filter(like => like.user.toString() === req.user.id)
+              .length === 0
+          ) {
+            return res.json({ success: false, msg: 'User has not liked' });
+          }
+
+          // Get remove index
+          const removeIndex = post.likes
+            .map(item => item.user.toString())
+            .indexOf(req.user.id);
+
+          // Splice out of array
+          post.likes.splice(removeIndex, 1);
+
+          // Save
+          post
+            .save()
+            .then(() => res.json({ success: true, msg: 'Like removed' }));
         })
         .catch(err => res.json({ success: false, msg: 'No post found' }));
     });

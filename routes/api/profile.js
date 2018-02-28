@@ -82,8 +82,7 @@ router.get('/handle/:handle', (req, res) => {
           msg: 'There is no profile with that handle'
         });
       }
-    })
-    .catch(err => res.json({ success: false, msg: err }));
+    });
 });
 
 // @route   POST api/profile
@@ -125,50 +124,45 @@ router.post(
       });
     }
 
-    Profile.findOne({ user: req.user.id })
-      .then(profile => {
-        // If Profile Exists
-        if (profile) {
-          // Update
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      // If Profile Exists
+      if (profile) {
+        // Update
 
-          Profile.findOneAndUpdate(
-            { user: req.user.id },
-            { $set: profileFields },
-            { new: true }
-          ).then(profile => {
+        Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        ).then(profile => {
+          res.json({
+            success: true,
+            msg: 'Profile updated',
+            data: { profile }
+          });
+        });
+      } else {
+        // Save
+
+        // Check if handle exists
+        Profile.findOne({ handle: profileFields.handle }).then(profile => {
+          if (profile) {
+            return res.json({
+              success: false,
+              msg: 'That handle already exists'
+            });
+          }
+
+          // Create profile
+          new Profile(profileFields).save().then(profile => {
             res.json({
               success: true,
-              msg: 'Profile updated',
+              msg: 'Profile created',
               data: { profile }
             });
           });
-        } else {
-          // Save
-
-          // Check if handle exists
-          Profile.findOne({ handle: profileFields.handle }).then(profile => {
-            if (profile) {
-              return res.json({
-                success: false,
-                msg: 'That handle already exists'
-              });
-            }
-
-            // Create profile
-            new Profile(profileFields)
-              .save()
-              .then(profile => {
-                res.json({
-                  success: true,
-                  msg: 'Profile created',
-                  data: { profile }
-                });
-              })
-              .catch(err => res.json({ success: false, msg: err }));
-          });
-        }
-      })
-      .catch(err => res.json({ success: false, msg: err }));
+        });
+      }
+    });
   }
 );
 
@@ -244,9 +238,7 @@ router.delete(
     }).then(profile => {
       // Get remove index
       const removeIndex = profile.experience
-        .map(function(item) {
-          return item.id;
-        })
+        .map(item => item.id)
         .indexOf(req.params.exp_id);
 
       // Splice out of array
@@ -276,9 +268,7 @@ router.delete(
     }).then(profile => {
       // Get remove index
       const removeIndex = profile.education
-        .map(function(item) {
-          return item.id;
-        })
+        .map(item => item.id)
         .indexOf(req.params.edu_id);
 
       // Splice out of array
