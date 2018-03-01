@@ -120,7 +120,7 @@ router.post(
       profileFields.gravatarimg = gravatar.url(req.body.gravataremail, {
         s: '200',
         r: 'pg',
-        d: '404'
+        d: 'mm'
       });
     }
 
