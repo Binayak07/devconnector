@@ -14,6 +14,9 @@ const ProfileSchema = new Schema({
   company: {
     type: String
   },
+  website: {
+    type: String
+  },
   gravatarimg: {
     type: String
   },
@@ -89,9 +92,6 @@ const ProfileSchema = new Schema({
     }
   ],
   social: {
-    website: {
-      type: String
-    },
     youtube: {
       type: String
     },
@@ -102,6 +102,9 @@ const ProfileSchema = new Schema({
       type: String
     },
     linkedin: {
+      type: String
+    },
+    instagram: {
       type: String
     }
   },
