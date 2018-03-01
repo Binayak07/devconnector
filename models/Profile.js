@@ -17,11 +17,6 @@ const ProfileSchema = new Schema({
   gravatarimg: {
     type: String
   },
-  age: {
-    type: String,
-    min: 13,
-    max: 120
-  },
   location: {
     type: String
   },
