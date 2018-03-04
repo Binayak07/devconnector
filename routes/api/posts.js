@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 // @route   GET /api/posts/:id
-// @desc    Get single post
+// @desc    Get single post with comments
 // @access  Public
 router.get('/:id', (req, res) => {
   Post.findById(req.params.id)
@@ -173,5 +173,13 @@ router.post(
     });
   }
 );
+
+// @route   POST /api/posts/comment/:id
+// @desc    Add a comment
+// @access  Private
+
+// @route   DELETE /api/posts/comment/:id
+// @desc    Delete a comment
+// @access  Private
 
 module.exports = router;

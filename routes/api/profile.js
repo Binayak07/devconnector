@@ -308,4 +308,76 @@ router.delete(
   }
 );
 
+// @route   POST api/profile/subscribe/:id
+// @desc    Subscribe to profile
+// @access  Private
+router.post(
+  '/subscribe/:profile_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findById(req.params.profile_id).then(profile => {
+      // Check if is same user
+      if (profile.user.toString() === req.user.id) {
+        return res.json({
+          success: false,
+          msg: 'Can not subscribe to yourself'
+        });
+      }
+
+      // Check if already subscribed
+      if (
+        profile.subscribers.filter(
+          subscriber => subscriber.user.toString() === req.user.id
+        ).length > 0
+      ) {
+        return res.json({
+          success: false,
+          msg: 'User already subscribed'
+        });
+      }
+
+      // Add user id to subscribers array
+      profile.subscribers.unshift({ user: req.user.id });
+
+      // Save
+      profile.save().then(() => {
+        res.json({ success: true, msg: 'User subscribed' });
+      });
+    });
+  }
+);
+
+// @route   POST /api/profile/unsubscribe/:profile_id
+// @desc    Unsubscribe from user
+// @access  Private
+router.post(
+  '/unsubscribe/:profile_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res, next) => {
+    Profile.findById(req.params.profile_id).then(profile => {
+      // Check if not subscribed
+      if (
+        profile.subscribers.filter(
+          subscriber => subscriber.user.toString() === req.user.id
+        ).length === 0
+      ) {
+        return res.json({ success: false, msg: 'User is not subscribed' });
+      }
+
+      // Get remove index
+      const removeIndex = profile.subscribers
+        .map(item => item.user.toString())
+        .indexOf(req.user.id);
+
+      // Splice out of array
+      profile.subscribers.splice(removeIndex, 1);
+
+      // Save
+      profile
+        .save()
+        .then(() => res.json({ success: true, msg: 'User unsubscribed' }));
+    });
+  }
+);
+
 module.exports = router;
