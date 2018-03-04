@@ -118,9 +118,9 @@ router.post(
     // Gravatar
     if (req.body.gravataremail) {
       profileFields.gravatarimg = gravatar.url(req.body.gravataremail, {
-        s: '200',
-        r: 'pg',
-        d: 'mm'
+        s: '200', // size
+        r: 'pg', // rating
+        d: 'mm' // default
       });
     }
 
